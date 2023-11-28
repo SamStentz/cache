@@ -41,6 +41,10 @@ async function saveImpl(): Promise<number | void> {
         writeFileSync(manifestPath, cachePaths.join("\n"));
 
         const workspace = process.env["GITHUB_WORKSPACE"] ?? process.cwd();
+        utils.logWarning(
+            `trying command: 
+            tar -cf - -P -C ${workspace} --files-from ${manifestPath} | gsutil -o 'GSUtil:parallel_composite_upload_threshold=250M' cp - "gs://${bucket}/${key}"`
+        );
         const exitCode = await exec("/bin/bash", [
             "-c",
             `tar -cf - -P -C ${workspace} --files-from ${manifestPath} | gsutil -o 'GSUtil:parallel_composite_upload_threshold=250M' cp - "gs://${bucket}/${key}"`

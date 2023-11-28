@@ -24,6 +24,10 @@ export async function restoreImpl(): Promise<string | undefined> {
         const key = core.getInput(Inputs.Key, { required: true });
         const bucket = core.getInput(Inputs.Bucket);
         const workspace = process.env["GITHUB_WORKSPACE"] ?? process.cwd();
+        utils.logWarning(
+            `trying command:
+            gsutil -o 'GSUtil:parallel_thread_count=1' -o 'GSUtil:sliced_object_download_max_components=8' cp "gs://${bucket}/${key}" - | tar --skip-old-files -x -P -C "${workspace}"`
+        );
         const exitCode = await exec("/bin/bash", [
             "-c",
             `gsutil -o 'GSUtil:parallel_thread_count=1' -o 'GSUtil:sliced_object_download_max_components=8' cp "gs://${bucket}/${key}" - | tar --skip-old-files -x -P -C "${workspace}"`
